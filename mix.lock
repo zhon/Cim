@@ -1,0 +1,3 @@
+%{
+  "exiftool": {:hex, :exiftool, "0.2.0", "aa1db35396fe13e36dd07b4d13cee3475c7e9d578990fe699555c659e6cd326e", [:mix], [], "hexpm", "e5564f5e4b0cba05b5690c6c5574595b722c68ac0929cccdc4be57bd813719de"},
+}
