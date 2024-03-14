@@ -25,21 +25,15 @@ defmodule Cim do
   end
 
   def main(_type, _args) do
-    start_time = ~N[2024-03-05 13:26:00]
-    dir = "/Volumes/Current/Lightroom/2024/2024-03-05\ CuteEpoxide Pool Party Unselected/"
-
-
-    images = Cim.image_list(dir)
-    times = Cim.offsets(length(images), start_time)
+    dir = "/Volumes/Current/Lightroom/2024/2024-03-05 CuteEpoxide Pool Party Unselected/"
     extensions = {".NEF", ".XMP"}
+    start_time = ~N[2024-03-05 13:26:00]
+    end_time = NaiveDateTime.add(start_time, 2, :hour)
 
-    {time, _} = :timer.tc(&Cim.change_times/3, [images, times, extensions ])
+    {time, _} = :timer.tc(
+      &Cim.change_times/4, [dir, extensions, start_time, end_time ]
+    )
     Logger.info("change_times: #{time}")
-    #Cim.change_times(images, times, extensions)
-  end
-
-  def offsets(count, start_time) do
-    offsets(count, start_time, NaiveDateTime.add(start_time, 2, :hour))
   end
 
   def offsets(count, start_time, end_time) do
@@ -59,16 +53,11 @@ defmodule Cim do
     Path.wildcard(wild_card_path) |> Enum.map( fn item -> Path.rootname(item) end)
   end
 
-  def image_list() do
-    wild_card_path = '/Volumes/Current/Lightroom/2024/2024-03-05 Ashley CuteEpoxide Pool Party/*.NEF'
-    image_list(wild_card_path)
-  end
+  def change_times(dir, extensions, start_time, end_time) do
+    Logger.debug("dir: #{dir} start_time: #{start_time}")
+    images = Cim.image_list(dir)
+    times = Cim.offsets(length(images), start_time, end_time)
 
-  def images_offsets_zipped(images, offsets) do
-    Enum.zip(images, offsets)
-  end
-
-  def change_times(images, times, extensions) do
     change_times(Enum.zip(images, times), extensions)
   end
 

@@ -4,7 +4,6 @@ defmodule CimTest do
 
   describe "offsets" do
 
-    @tag :skip
     test "offset for first element should be 0" do
 
       start_time = ~N[2024-03-10 13:26:08.003]
@@ -15,7 +14,6 @@ defmodule CimTest do
       assert(Cim.offsets(item_count, start_time, end_time) |> Enum.at(0) == 0)
     end
 
-    @tag :skip
     test "offset for  should be 3600" do
       start_time = ~N[2024-03-10 13:26:08.003]
       end_time = ~N[2024-03-10 15:26:08.003]
@@ -24,6 +22,7 @@ defmodule CimTest do
       assert(offsets |> Enum.at(1) == 3600)
     end
 
+    @tag :skip
     test "real run on temp" do
       dir = "/Volumes/Current/Lightroom/2024/2024-03-05\ CuteEpoxide Pool Party Unselected/"
       images = Cim.image_list(dir)
