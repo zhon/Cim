@@ -14,6 +14,7 @@ defmodule Cim do
   """
 
   use Application
+  require Logger
 
   @spec start(any(), any()) :: {:error, any()} | {:ok, pid()}
   def start(type, args) do
@@ -24,8 +25,16 @@ defmodule Cim do
   end
 
   def main(_type, _args) do
+    start_time = ~N[2024-03-05 13:26:00]
+    dir = "/Volumes/Current/Lightroom/2024/2024-03-05\ CuteEpoxide Pool Party Unselected/"
 
-    #Cim.find_images
+
+    images = Cim.image_list(dir)
+    Cim.change_times(
+      images,
+      Cim.offsets(length(images), start_time),
+        {".NEF", ".XMP"}
+    )
   end
 
   def offsets(count, start_time) do
@@ -58,29 +67,23 @@ defmodule Cim do
     Enum.zip(images, offsets)
   end
 
-  #def find_images do
-    #wild_card_path = '/Volumes/Current/Lightroom/2024/2024-03-05 Ashley CuteEpoxide Pool Party/*.NEF'
-    #file_list = Path.wildcard(wild_card_path) |> Enum.map( fn item -> Path.rootname(item) end)
-
-    #change_times(file_list, {".NEF", ".XMP"})
-  #end
+  def change_times(images, times, extensions) do
+    change_times(Enum.zip(images, times), extensions)
+  end
 
   def change_times(image_times, extensions) do
-    IO.inspect(image_times)
     Stream.run(
       Task.async_stream(image_times, fn item ->
         change_time(item, extensions)
-      end , [max_concurrency: 10])
+      end , [max_concurrency: 10, timeout: :infinity])
     )
   end
 
   def change_time(image_time, {ext1, ext2})  do
     {root_name, time} = image_time
-    IO.write(root_name <> ext1)
-    IO.puts(", '#{time}'")
+    Logger.info(root_name <> ext1 <> ", '#{time}'")
     {:ok, _metadata} = Exiftool.execute(["-Alldates=#{time}", "-overwrite_original_in_place", root_name <> ext1])
     {:ok, _metadata} = Exiftool.execute(["-Alldates=#{time}", "-overwrite_original_in_place", root_name <> ext2])
-      IO.inspect _metadata
   end
 
 end

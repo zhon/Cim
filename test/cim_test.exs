@@ -25,15 +25,13 @@ defmodule CimTest do
     end
 
     test "real run on temp" do
-      images = Cim.image_list("/Users/zhon/trash")
+      dir = "/Volumes/Current/Lightroom/2024/2024-03-05\ CuteEpoxide Pool Party Unselected/"
+      images = Cim.image_list(dir)
       Cim.change_times(
-        Enum.zip(
           images,
-          Cim.offsets(length(images), DateTime.utc_now)
-        ),
+          Cim.offsets(length(images), DateTime.utc_now),
         {".NEF", ".XMP"}
       )
-
     end
   end
 
