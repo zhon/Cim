@@ -30,11 +30,12 @@ defmodule Cim do
 
 
     images = Cim.image_list(dir)
-    Cim.change_times(
-      images,
-      Cim.offsets(length(images), start_time),
-        {".NEF", ".XMP"}
-    )
+    times = Cim.offsets(length(images), start_time)
+    extensions = {".NEF", ".XMP"}
+
+    {time, _} = :timer.tc(&Cim.change_times/3, [images, times, extensions ])
+    Logger.info("change_times: #{time1}")
+    #Cim.change_times(images, times, extensions)
   end
 
   def offsets(count, start_time) do
