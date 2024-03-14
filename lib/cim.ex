@@ -34,7 +34,7 @@ defmodule Cim do
     extensions = {".NEF", ".XMP"}
 
     {time, _} = :timer.tc(&Cim.change_times/3, [images, times, extensions ])
-    Logger.info("change_times: #{time1}")
+    Logger.info("change_times: #{time}")
     #Cim.change_times(images, times, extensions)
   end
 
@@ -76,13 +76,13 @@ defmodule Cim do
     Stream.run(
       Task.async_stream(image_times, fn item ->
         change_time(item, extensions)
-      end , [max_concurrency: 10, timeout: :infinity])
+      end , [max_concurrency: 100, timeout: :infinity])
     )
   end
 
   def change_time(image_time, {ext1, ext2})  do
     {root_name, time} = image_time
-    Logger.info(root_name <> ext1 <> ", '#{time}'")
+    #Logger.info(root_name <> ext1 <> ", '#{time/1000}' seconds")
     {:ok, _metadata} = Exiftool.execute(["-Alldates=#{time}", "-overwrite_original_in_place", root_name <> ext1])
     {:ok, _metadata} = Exiftool.execute(["-Alldates=#{time}", "-overwrite_original_in_place", root_name <> ext2])
   end
