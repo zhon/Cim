@@ -1,6 +1,6 @@
 # Cim
 
-**TODO: Add description**
+Change Image Metadata using elixir
 
 ## Installation
 
